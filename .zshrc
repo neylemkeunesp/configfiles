@@ -174,16 +174,20 @@ export EDITOR=vim
 bindkey -v
 export PATH=~/anaconda/bin:$PATH:/Applications/Maxima.app/Contents/MacOS/:/Applications/Racket\ v6.2.1/bin
 export PATH=$PATH:/Users/neylemke/pesquisa/scala/scala-2.11.8/bin
-#eval "$(fasd --init posix-alias zsh-hook)"
+eval "$(fasd --init posix-alias zsh-hook)"
+eval "$(pyenv init -)"
+if [ -n "$INSIDE_EMACS" ]; then
+    export EDITOR=emacsclient
+    unset zle_bracketed_paste  # This line
+fi
+figlet -w 100 `hostname`; fortune | cowsay; ansiweather -l Botucatu,BR -u metric -s true -a false
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f /Users/neylemke/google-cloud-sdk/path.zsh.inc ]; then
-  source '/Users/neylemke/google-cloud-sdk/path.zsh.inc'
+if [ -f /Users/neylemke/Downloads/google-cloud-sdk/path.zsh.inc ]; then
+  source '/Users/neylemke/Downloads/google-cloud-sdk/path.zsh.inc'
 fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f /Users/neylemke/google-cloud-sdk/completion.zsh.inc ]; then
-  source '/Users/neylemke/google-cloud-sdk/completion.zsh.inc'
+if [ -f /Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc ]; then
+  source '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc'
 fi
-
-figlet `hostname`; fortune| cowsay; ansiweather -l Botucatu, BR -u metric -d true -a true

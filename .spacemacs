@@ -35,8 +35,7 @@ values."
      xkcd
      (shell :variables
              shell-default-height 30
-             shell-default-position 'bottom
-             shell-default-term-shell "/bin/bash")
+             shell-default-position 'bottom)
      gnus
      python
      ipython-notebook
@@ -44,19 +43,21 @@ values."
      search-engine
      spotify
      ranger
-     dash
      ;; spell-checking
+     ;; hunspell
      ;; syntax-checking
      ;; version-control
      semantic
-     scala
+     ;; scala
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      ecb 
+                                      ecb
+                                      ox-reveal
+                                      ob-python
                                       )
 
 
@@ -208,9 +209,6 @@ values."
    )) 
 
 (defun dotspacemacs/user-init ()
-
-  (setq exec-path-from-shell-check-startup-files nil)
-
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
@@ -258,28 +256,111 @@ user code."
 ;;;(setq ispell-dictionary "en_US")
 ;(setq ispell-dictionary "portugues")
 
-(setq paradox-github-token "412ef51bf8d45f7e87e20f5616fd7208555fc2b9")
+;;  (org-babel-do-load-languages
+;;   'org-babel-load-languages
+;;   '((python . t)))
+
+     (setq paradox-github-token "412ef51bf8d45f7e87e20f5616fd7208555fc2b9")
+ ;;    (org-babel-do-load-languages
+ ;;     'org-babel-load-languages
+ ;;     '((R . t)
+ ;;       (python . t)
+ ;;       (latex . t)))
 
 )
 
 (defun dotspacemacs/user-config ()
-                                      (add-hook 'org-present-mode-hook
-                                                (lambda ()
-                                                  (org-present-big)
-                                                  (org-display-inline-images)
-                                                  (org-present-hide-cursor)
-                                                  (org-present-read-only)))
-                                      (add-hook 'org-present-mode-quit-hook
-                                                (lambda ()
-                                                  (org-present-small)
-                                                  (org-remove-inline-images)
-                                                  (org-present-show-cursor)
-                                                  (org-present-read-write)))
-                                 
-"Configuration function for user code.
+  "Configuration function for user code.
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
-)
+
+
+  (require 'ob-python)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (latex . t)
+     (shell . t)
+     ))
+
+
+ ;Pnw-mode for Pweave reST documents
+  (defun Pnw-mode ()
+    (require 'noweb-font-lock-mode)
+    (noweb-mode)
+    (setq noweb-default-code-mode 'python-mode)
+    (setq noweb-doc-mode 'rst-mode))
+
+  (setq auto-mode-alist (append (list (cons "\\.rstw$" 'rstw-mode))
+                                auto-mode-alist))
+
+                                        ;Plw-mode for Pweave Latex documents
+  (defun Plw-mode ()
+    (require 'noweb-font-lock-mode)
+    (noweb-mode)
+    (setq noweb-default-code-mode 'python-mode)
+    (setq noweb-doc-mode 'latex-mode))
+
+  (setq auto-mode-alist (append (list (cons "\\.texw$" 'texw-mode))
+                                auto-mode-alist))
+
+;; allow for export=>beamer by placing
+
+;; #+LaTeX_CLASS: beamer in org files
+(unless (boundp 'org-export-latex-classes)
+  (setq org-export-latex-classes nil))
+(add-to-list 'org-export-latex-classes
+  ;; beamer class, for presentations
+  '("beamer"
+     "\\documentclass[11pt]{beamer}\n
+      \\mode<{{{beamermode}}}>\n
+      \\usetheme{{{{beamertheme}}}}\n
+      \\usecolortheme{{{{beamercolortheme}}}}\n
+      \\beamertemplateballitem\n
+      \\setbeameroption{show notes}
+      \\usepackage[utf8]{inputenc}\n
+      \\usepackage[T1]{fontenc}\n
+      \\usepackage{hyperref}\n
+      \\usepackage{color}
+      \\usepackage{listings}
+      \\lstset{numbers=none,language=[ISO]C++,tabsize=4,
+  frame=single,
+  basicstyle=\\small,
+  showspaces=false,showstringspaces=false,
+  showtabs=false,
+  keywordstyle=\\color{blue}\\bfseries,
+  commentstyle=\\color{red},
+  }\n
+      \\usepackage{verbatim}\n
+      \\institute{{{{beamerinstitute}}}}\n          
+       \\subject{{{{beamersubject}}}}\n"
+
+     ("\\section{%s}" . "\\section*{%s}")
+     
+     ("\\begin{frame}[fragile]\\frametitle{%s}"
+       "\\end{frame}"
+       "\\begin{frame}[fragile]\\frametitle{%s}"
+       "\\end{frame}")))
+
+  ;; letter class, for formal letters
+
+  (add-to-list 'org-export-latex-classes
+
+  '("letter"
+     "\\documentclass[11pt]{letter}\n
+      \\usepackage[utf8]{inputenc}\n
+      \\usepackage[T1]{fontenc}\n
+      \\usepackage{color}"
+     
+     ("\\section{%s}" . "\\section*{%s}")
+     ("\\subsection{%s}" . "\\subsection*{%s}")
+     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+     ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+
+
+  )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
