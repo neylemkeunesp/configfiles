@@ -18,6 +18,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     html
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -28,7 +29,9 @@ values."
      emacs-lisp
      git 
      markdown
-     org
+     org (org :variables
+              org-enable-reveal-js-support t
+              org-enable-github-support t)
      clojure
      latex
      games
@@ -39,7 +42,6 @@ values."
              shell-default-term-shell "/bin/bash")
      gnus
      python
-     ipython-notebook
      osx
      search-engine
      spotify
@@ -56,7 +58,8 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      ecb 
+                                      ecb
+                                      ob-ipython
                                       )
 
 
@@ -220,8 +223,8 @@ user code."
 
 (defun dotspacemacs/user-config ()
 
-
-;;; Modo de Apresentação
+;;
+;;;;; Modo de Apresentação
   (add-hook 'org-present-mode-hook
                                                 (lambda ()
                                                   (org-present-big)
@@ -235,18 +238,13 @@ user code."
                                                   (org-present-show-cursor)
                                                   (org-present-read-write)))
 
-;;; Linguagens para o orgmode
- ;; (require 'ob-python)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)
-     (latex . t)
-     (shell . t)
-     ))
-
+(setq org-confirm-babel-evaluate nil)   ;don't prompt me to confirm everytime I want to evaluate a block
+;;
+;;;;; display/update images in the buffer after I evaluate
+(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
  ;Pnw-mode for Pweave reST documents
-  (defun Pnw-mode ()
+ (defun Pnw-mode ()
     (require 'noweb-font-lock-mode)
     (noweb-mode)
     (setq noweb-default-code-mode 'python-mode)
@@ -264,10 +262,9 @@ user code."
 
   (setq auto-mode-alist (append (list (cons "\\.texw$" 'texw-mode))
                                 auto-mode-alist))
-
-;; allow for export=>beamer by placing
-
-;; #+LaTeX_CLASS: beamer in org files
+;;;; allow for export=>beamer by placing
+;;
+;;;; #+LaTeX_CLASS: beamer in org files
 (unless (boundp 'org-export-latex-classes)
   (setq org-export-latex-classes nil))
 (add-to-list 'org-export-latex-classes
@@ -322,14 +319,22 @@ user code."
 
 
 
-"Configuration function for user code.
- This function is called at the very end of Spacemacs initialization after
-layers configuration. You are free to put any user code."
+;;"Configuration function for user code.
+;; This function is called at the very end of Spacemacs initialization after
+;;layers configuration. You are free to put any user code."
 
-(eval-after-load "org"
-'(require 'ox-md nil t))
+
+
+;;; Linguagens para o orgmode
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (latex . t)
+   (shell . t)
+   (ipython . t)
+   (lisp . t)
+   ))
 )
-
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables
