@@ -81,9 +81,8 @@ RPROMPT="%{$fg_no_bold[yellow]%}%d%{$reset_color%}"
 export MAIL=/var/spool/mail/$USERNAME
 export LESS=-cex3M
 export HELPDIR=/usr/local/lib/zsh/help  # directory for run-help function to find docs
-PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin::/usr/local/bin:/usr/local/gromacs/bin
-PATH=$PATH:/Applications/Mathematica.app/Contents/MacOS
-PATH=$PATH:/usr/local/texlive/2015/bin/x86_64-darwin:/Users/neylemke/anaconda/bin
+PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/local/gromacs/bin
+PATH=:~/anaconda3/bin:$PATH:/usr/local/texlive/2015/bin/x86_64-darwin
 MAILCHECK=300
 HISTSIZE=200
 DIRSTACKSIZE=20
@@ -174,7 +173,7 @@ export EDITOR=vim
 bindkey -v
 export PATH=~/anaconda/bin:$PATH:/Applications/Maxima.app/Contents/MacOS/:/Applications/Racket\ v6.2.1/bin
 export PATH=$PATH:/Users/neylemke/pesquisa/scala/scala-2.11.8/bin
-#eval "$(fasd --init posix-alias zsh-hook)"
+eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-wcomp zsh-ccomp-install)"
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f /Users/neylemke/google-cloud-sdk/path.zsh.inc ]; then
@@ -186,4 +185,16 @@ if [ -f /Users/neylemke/google-cloud-sdk/completion.zsh.inc ]; then
   source '/Users/neylemke/google-cloud-sdk/completion.zsh.inc'
 fi
 
-figlet `hostname`; fortune| cowsay; ansiweather -l Botucatu, BR -u metric -d true -a true
+if [ $commands[fasd] ]; then # check if fasd is installed
+  fasd_cache="${ZSH_CACHE_DIR}/fasd-init-cache"
+  if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
+    fasd --init auto >| "$fasd_cache"
+  fi
+  source "$fasd_cache"
+  unset fasd_cache
+
+  alias v="f -e $EDITOR"
+  alias o='a -e xdg-open'
+fi
+figlet `hostname`; fortune| cowsay 
+plugins=(fasd)
