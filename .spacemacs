@@ -18,20 +18,21 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     html
+     ;; html
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      auto-completion
-     ;; better-defaults
+     better-defaults
      emacs-lisp
      git 
      markdown
      org (org :variables
               org-enable-reveal-js-support t
-              org-enable-github-support t)
+              ;; org-enable-github-support t
+              )
      clojure
      latex
      games
@@ -42,23 +43,18 @@ values."
              shell-default-term-shell "/bin/bash")
      gnus
      python
-     osx
      search-engine
      spotify
-     ranger
-     dash
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
      semantic
-     scala
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      ecb
                                       ob-ipython
                                       )
 
@@ -111,8 +107,8 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '( "Consolas"
-                               :size 18
+   dotspacemacs-default-font '( "UbuntuMono"
+                               :size 30
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -208,6 +204,8 @@ values."
    ;; specified with an installed package.
    ;; Not used for now. (default nil)
    dotspacemacs-default-package-repository nil
+   ;; Para evitar problema no modo evil
+   evil-want-C-u-scroll nil
    )) 
 
 (defun dotspacemacs/user-init ()
@@ -243,28 +241,6 @@ user code."
 ;;;;; display/update images in the buffer after I evaluate
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
- ;Pnw-mode for Pweave reST documents
- (defun Pnw-mode ()
-    (require 'noweb-font-lock-mode)
-    (noweb-mode)
-    (setq noweb-default-code-mode 'python-mode)
-    (setq noweb-doc-mode 'rst-mode))
-
-  (setq auto-mode-alist (append (list (cons "\\.rstw$" 'rstw-mode))
-                                auto-mode-alist))
-
-                                        ;Plw-mode for Pweave Latex documents
-  (defun Plw-mode ()
-    (require 'noweb-font-lock-mode)
-    (noweb-mode)
-    (setq noweb-default-code-mode 'python-mode)
-    (setq noweb-doc-mode 'latex-mode))
-
-  (setq auto-mode-alist (append (list (cons "\\.texw$" 'texw-mode))
-                                auto-mode-alist))
-;;;; allow for export=>beamer by placing
-;;
-;;;; #+LaTeX_CLASS: beamer in org files
 (unless (boundp 'org-export-latex-classes)
   (setq org-export-latex-classes nil))
 (add-to-list 'org-export-latex-classes
@@ -344,7 +320,10 @@ user code."
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))))
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(package-selected-packages
+   (quote
+    (chess unfill mwim define-word org-pomodoro alert log4e zeal-at-point yapfify xterm-color xkcd ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package typit mmt toc-org tagedit sudoku stickyfunc-enhance srefactor spotify spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs ranger rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-category-capture org-present gntp org-plus-contrib org-mime org-download org-bullets open-junk-file ob-ipython noflet neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl indent-guide hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-spotify-plus multi helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit ghub treepy let-alist graphql with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode engine-mode emmet-mode elisp-slime-nav dumb-jump diminish cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company column-enforce-mode clojure-snippets clj-refactor hydra inflections edn multiple-cursors paredit peg clean-aindent-mode cider-eval-sexp-fu eval-sexp-fu highlight cider sesman seq spinner queue pkg-info clojure-mode epl bind-map bind-key auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed auctex anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

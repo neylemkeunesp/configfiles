@@ -171,8 +171,6 @@ zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' \
 zstyle ':completion:*:functions' ignored-patterns '_*'
 export EDITOR=vim
 bindkey -v
-export PATH=~/anaconda/bin:$PATH:/Applications/Maxima.app/Contents/MacOS/:/Applications/Racket\ v6.2.1/bin
-export PATH=$PATH:/Users/neylemke/pesquisa/scala/scala-2.11.8/bin
 eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-wcomp zsh-ccomp-install)"
 
 # The next line updates PATH for the Google Cloud SDK.
@@ -185,16 +183,7 @@ if [ -f /Users/neylemke/google-cloud-sdk/completion.zsh.inc ]; then
   source '/Users/neylemke/google-cloud-sdk/completion.zsh.inc'
 fi
 
-if [ $commands[fasd] ]; then # check if fasd is installed
-  fasd_cache="${ZSH_CACHE_DIR}/fasd-init-cache"
-  if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
-    fasd --init auto >| "$fasd_cache"
-  fi
-  source "$fasd_cache"
-  unset fasd_cache
-
-  alias v="f -e $EDITOR"
-  alias o='a -e xdg-open'
-fi
-figlet `hostname`; fortune| cowsay 
+screenfetch; fortune| cowsay;curl wttr.in --silent | head -n 7 
+#figlet `hostname`; fortune| cowsay 
 plugins=(fasd)
+source /usr/local/lib/python2.7/dist-packages/powerline/bindings/zsh/powerline.zsh
