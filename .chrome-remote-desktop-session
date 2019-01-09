@@ -1,1 +1,1 @@
-exec /usr/sbin/lightdm-session 'gnome-session --session=cinnamon'
+exec /usr/X11/Xsession "cinnamon-session-cinnamon2d" 
