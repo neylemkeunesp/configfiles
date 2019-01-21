@@ -1,1 +1,1 @@
-exec /usr/X11/Xsession "cinnamon-session-cinnamon2d" 
+exec /usr/sbin/lightdm "cinnamon-session-cinnamon" 
