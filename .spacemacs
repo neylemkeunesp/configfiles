@@ -18,6 +18,8 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     javascript
+     csv
      html
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -30,9 +32,7 @@ values."
      git 
      markdown
      org (org :variables
-              org-enable-reveal-js-support t
-              org-enable-github-support t)
-     clojure
+              org-enable-reveal-js-support t)
      latex
      games
      xkcd
@@ -58,8 +58,10 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      ecb
                                       ob-ipython
+                                      chess
+                                      org-ref
+                                      org-brain
                                       )
 
 
@@ -112,7 +114,7 @@ values."
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
    dotspacemacs-default-font '( "Consolas"
-                               :size 18
+                               :size  18
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -211,6 +213,42 @@ values."
    )) 
 
 (defun dotspacemacs/user-init ()
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/MobileOrg/todoorg/todo.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("j" "Journal" entry (file+datetree "~/MobileOrg/todoorg/journal.org")
+           "* %?\nEntered on %U\n  %i\n  %a")
+          ("T" "Todo with Clipboard" entry (file "~/MobileOrg/todoorg/journal.org")
+           "* TODO %?\n%U\n   %c" :empty-lines 1)
+          ("n" "Note" entry (file "~/MobileOrg/todoorg/journal.org")
+           "* NOTE %?\n%U" :empty-lines 1)
+          ("N" "Note with Clipboard" entry (file "~/MobileOrg/todoorg/journal.org")
+           "* NOTE %?\n%U\n   %c" :empty-lines 1)
+          ("e" "Event" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Transient")
+           "* EVENT %?\n%U" :empty-lines 1)
+          ("E" "Event With Clipboard" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Transient")
+           "* EVENT %?\n%U\n   %c" :empty-lines 1))
+        )
+
+
+  (use-package org-brain :ensure t
+    :init
+    (setq org-brain-path "~/MobileOrg/brain")
+    ;; For Evil users
+    (with-eval-after-load 'evil
+
+
+      (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+    :config
+    (setq org-id-track-globally t)
+    (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+    (push '("b" "Brain" plain (function org-brain-goto-end)
+            "* %i%?" :empty-lines 1)
+          org-capture-templates)
+    (setq org-brain-visualize-default-choices 'all)
+    (setq org-brain-title-max-length 12))
+
+
 ;;; Evita erro na inicialização
   (setq exec-path-from-shell-check-startup-files nil)
 
@@ -331,9 +369,15 @@ user code."
  '((python . t)
    (latex . t)
    (shell . t)
-   (ipython . t)
-   (lisp . t)
-   ))
+))
+;;; Backup
+(setq backup-by-copying t   ; don't clobber symlinks
+      version-control t     ; use versioned backups
+      delete-old-versions t
+      kept-new-versions 6
+      kept-old-versions 2)
+
+
 )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -344,7 +388,10 @@ user code."
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))))
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(package-selected-packages
+   (quote
+    (web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern tern coffee-mode atomic-chrome websocket twittering-mode org-brain pdf-tools key-chord ivy helm-bibtex biblio parsebib biblio-core org-ref tramp-hdfs auctex-latexmk yapfify xterm-color xkcd ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package typit toc-org tagedit stickyfunc-enhance srefactor spotify spacemacs-theme spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs ranger rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox pacmacs ox-reveal osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file ob-ipython noflet neotree multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-spotify helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav ecb dumb-jump dash-at-point cython-mode csv-mode company-web company-statistics company-auctex company-anaconda column-enforce-mode clean-aindent-mode bracketed-paste auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
