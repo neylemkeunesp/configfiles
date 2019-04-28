@@ -18,7 +18,6 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     javascript
      csv
      html
      ;; ----------------------------------------------------------------
@@ -31,8 +30,11 @@ values."
      emacs-lisp
      git 
      markdown
-     org (org :variables
-              org-enable-reveal-js-support t)
+     org
+     (org :variables
+              org-enable-reveal-js-support t
+              )
+     clojure
      latex
      games
      xkcd
@@ -42,17 +44,14 @@ values."
              shell-default-term-shell "/bin/bash")
      gnus
      python
-     osx
+     ipython-notebook
      search-engine
      spotify
      ranger
-     dash
      ;; spell-checking
      ;; syntax-checking
      ;; version-control
      semantic
-     scala
-     search-engine
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -60,9 +59,10 @@ values."
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
                                       ob-ipython
-                                      chess
+                                      ox-reveal
                                       org-ref
                                       org-brain
+                                      all-the-icons
                                       )
 
 
@@ -114,8 +114,8 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '( "Consolas"
-                               :size  18
+   dotspacemacs-default-font '( "Ubuntu Mono"
+                               :size  20
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -214,61 +214,60 @@ values."
    )) 
 
 (defun dotspacemacs/user-init ()
-  (setq org-capture-templates  
-        '(("t" "Todo" entry (file+headline "~/MobileOrg/todoorg/todo.org" "Tasks")
-           "* TODO %?\n  %i\n  %a")
-          ("j" "Journal" entry (file+datetree "~/MobileOrg/todoorg/journal.org")
-           "* %?\nEntered on %U\n  %i\n  %a")
-          ("a" "Todo in AI" entry (file+headline "~/MobileOrg/todoorg/ai.org" "Tasks")
-           "* TODO %?\n  %i\n  %a")
-          ("A" "Todo in AI with Clipboard" entry (file "~/MobileOrg/todoorg/ai.org")
-           "* TODO %?\n%U\n   %c" :empty-lines 1)
-          ("a" "Todo in AI" entry (file "~/MobileOrg/todoorg/ai.org")
-           "* TODO %?\n%U\n   %c" :empty-lines 1)
-          ("n" "Note" entry (file "~/MobileOrg/todoorg/journal.org")
-           "* NOTE %?\n%U" :empty-lines 1)
-          ("N" "Note with Clipboard" entry (file "~/MobileOrg/todoorg/journal.org")
-           "* NOTE %?\n%U\n   %c" :empty-lines 1)
-          ("e" "Event" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Transient")
-           "* EVENT %?\n%U" :empty-lines 1)
-          ("E" "Event With Clipboard" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Transient")
-           "* EVENT %?\n%U\n   %c" :empty-lines 1) 
-          ("l" "Link" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Link")
-         "* Link  %?\n%U\n   %c" :empty-lines 1))
-        ) 
-  
+;;; Evita erro na inicialização
+  (setq exec-path-from-shell-check-startup-files nil)
 
+  ;; Acerta digitaćão do cedilha
+  (setq default-input-method "portuguese-prefix")
+  "Initialization function for user code.
+It is called immediately after `dotspacemacs/init'.  You are free to put any
+user code."
+(setq paradox-github-token "412ef51bf8d45f7e87e20f5616fd7208555fc2b9")
+
+) 
+
+(defun dotspacemacs/user-config ()
+(setq neo-theme 'icons)
+
+  (setq org-structure-template-alist
+    '(("a" . "export ascii")
+     ("c" . "center")
+     ("C" . "comment")
+     ("e" . "example") 
+     ("E" . "export")
+     ("h" . "export html")
+     ("l" . "export latex")
+     ("q" . "quote")
+     ("s" . "src")
+     ("v" . "verse")
+     ("n" . "note")
+     ("d" . "description")))
+
+  ;; Captura dos templates
+  (setq org-capture-templates
+  '(("t" "Todo" entry (file+headline "~/MobileOrg/todoorg/todo.org" "Tasks")
+     "* TODO %?\n  %i\n  %a")
+    ("j" "Journal" entry (file+datetree "~/MobileOrg/todoorg/journal.org")
+     "* %?\nEntered on %U\n  %i\n  %a")))
+;; Configuraão do org-brain 
   (use-package org-brain :ensure t
     :init
     (setq org-brain-path "~/MobileOrg/brain")
     ;; For Evil users
     (with-eval-after-load 'evil
-
-
       (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
     :config
-    (setq org-id-track-globally t)
+    (setq org-id-track-globally t) 
     (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
     (push '("b" "Brain" plain (function org-brain-goto-end)
             "* %i%?" :empty-lines 1)
           org-capture-templates)
     (setq org-brain-visualize-default-choices 'all)
     (setq org-brain-title-max-length 12))
-
-
-;;; Evita erro na inicialização
-  (setq exec-path-from-shell-check-startup-files nil)
-
-  "Initialization function for user code.
-It is called immediately after `dotspacemacs/init'.  You are free to put any
-user code."
-(setq paradox-github-token "412ef51bf8d45f7e87e20f5616fd7208555fc2b9")
-
-)
-
-(defun dotspacemacs/user-config ()
-
-;;
+  ;;
+  (require 'ox-reveal)
+  (setq Org-Reveal-root "file:reveal.js")
+  (setq Org-Reveal-title-slide nil)
 ;;;;; Modo de Apresentação
   (add-hook 'org-present-mode-hook
                                                 (lambda ()
@@ -288,27 +287,6 @@ user code."
 ;;;;; display/update images in the buffer after I evaluate
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
- ;Pnw-mode for Pweave reST documents
- (defun Pnw-mode ()
-    (require 'noweb-font-lock-mode)
-    (noweb-mode)
-    (setq noweb-default-code-mode 'python-mode)
-    (setq noweb-doc-mode 'rst-mode))
-
-  (setq auto-mode-alist (append (list (cons "\\.rstw$" 'rstw-mode))
-                                auto-mode-alist))
-
-                                        ;Plw-mode for Pweave Latex documents
-  (defun Plw-mode ()
-    (require 'noweb-font-lock-mode)
-    (noweb-mode)
-    (setq noweb-default-code-mode 'python-mode)
-    (setq noweb-doc-mode 'latex-mode))
-
-  (setq auto-mode-alist (append (list (cons "\\.texw$" 'texw-mode))
-                                auto-mode-alist))
-;;;; allow for export=>beamer by placing
-;;
 ;;;; #+LaTeX_CLASS: beamer in org files
 (unless (boundp 'org-export-latex-classes)
   (setq org-export-latex-classes nil))
@@ -376,15 +354,10 @@ user code."
  '((python . t)
    (latex . t)
    (shell . t)
-))
-;;; Backup
-(setq backup-by-copying t   ; don't clobber symlinks
-      version-control t     ; use versioned backups
-      delete-old-versions t
-      kept-new-versions 6
-      kept-old-versions 2)
-
-
+   (ipython . t)
+   (lisp . t)
+   (R . t )
+   ))
 )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
@@ -396,9 +369,23 @@ user code."
  '(custom-safe-themes
    (quote
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(org-structure-template-alist
+   (quote
+    (("a" . "export ascii")
+     ("c" . "center")
+     ("C" . "comment")
+     ("e" . "example")
+     ("E" . "export")
+     ("h" . "export html")
+     ("l" . "export latex")
+     ("q" . "quote")
+     ("s" . "src")
+     ("v" . "verse")
+     ("n" . "note")
+     ("d" . "description"))))
  '(package-selected-packages
    (quote
-    (web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern tern coffee-mode atomic-chrome websocket twittering-mode org-brain pdf-tools key-chord ivy helm-bibtex biblio parsebib biblio-core org-ref tramp-hdfs auctex-latexmk yapfify xterm-color xkcd ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package typit toc-org tagedit stickyfunc-enhance srefactor spotify spacemacs-theme spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs ranger rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox pacmacs ox-reveal osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file ob-ipython noflet neotree multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-spotify helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav ecb dumb-jump dash-at-point cython-mode csv-mode company-web company-statistics company-auctex company-anaconda column-enforce-mode clean-aindent-mode bracketed-paste auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell 2048-game))))
+    (all-the-icons memoize polymode lv parseedn parseclj a transient ein skewer-mode deferred websocket js2-mode simple-httpd org-ref pdf-tools key-chord ivy helm-bibtex biblio parsebib biblio-core tablist org-bookmark-heading org-brain csv-mode slime define-word zeal-at-point yapfify xterm-color xkcd ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package typit mmt toc-org tagedit sudoku stickyfunc-enhance srefactor spotify spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs ranger rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-download org-bullets open-junk-file ob-ipython noflet neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl indent-guide hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-spotify-plus multi helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit ghub treepy let-alist graphql with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode engine-mode emmet-mode elisp-slime-nav dumb-jump diminish cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company column-enforce-mode clojure-snippets clj-refactor hydra inflections edn multiple-cursors paredit peg clean-aindent-mode cider-eval-sexp-fu eval-sexp-fu highlight cider sesman seq spinner queue pkg-info clojure-mode epl bind-map bind-key auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed auctex anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
