@@ -156,7 +156,7 @@ values."
    dotspacemacs-helm-position 'bottom
    ;; If non nil the paste micro-state is enabled. When enabled pressing `p`
    ;; several times cycle between the kill ring content. (default nil)
-   dotspacemacs-enable-paste-micro-state nil
+   dotspacemacs-enable-paste-micro-state 't
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
    dotspacemacs-which-key-delay 0.4
@@ -217,7 +217,7 @@ values."
 ;;; Evita erro na inicialização
   (setq exec-path-from-shell-check-startup-files nil)
 
-  ;; Acerta digitaćão do cedilha
+  ;; Acerta digitação do cedilha
   (setq default-input-method "portuguese-prefix")
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
@@ -227,7 +227,32 @@ user code."
 ) 
 
 (defun dotspacemacs/user-config ()
-(setq neo-theme 'icons)
+
+  ;;"Configuration function for user code.
+  ;; This function is called at the very end of Spacemacs initialization after
+  ;;layers configuration. You are free to put any user code."
+
+;;; Pequenos Ajustes
+  (setq neo-theme 'icons)
+  (add-hook 'after-init-hook #'global-emojify-mode)
+
+;;; Eshell
+  (setq eshell-prompt-function
+        (lambda ()
+          (concat
+           (propertize "┌─[" 'face `(:foreground "lightblue"))
+           (propertize (user-login-name) 'face `(:foreground "orange"))
+           (propertize "@" 'face `(:foreground "red"))
+           (propertize (system-name) 'face `(:foreground "orange"))
+           (propertize "]──[" 'face `(:foreground "lightblue"))
+           (propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "yellow"))
+           (propertize "]──[" 'face `(:foreground "lightblue"))
+           (propertize (concat (eshell/pwd)) 'face `(:foreground "white"))
+           (propertize "]\n" 'face `(:foreground "lightblue"))
+           (propertize "└─>" 'face `(:foreground "lightblue"))
+           (propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "lightblue"))
+           )))
+
 
   (setq org-structure-template-alist
     '(("a" . "export ascii")
@@ -244,12 +269,32 @@ user code."
      ("d" . "description")))
 
   ;; Captura dos templates
-  (setq org-capture-templates
-  '(("t" "Todo" entry (file+headline "~/MobileOrg/todoorg/todo.org" "Tasks")
-     "* TODO %?\n  %i\n  %a")
-    ("j" "Journal" entry (file+datetree "~/MobileOrg/todoorg/journal.org")
-     "* %?\nEntered on %U\n  %i\n  %a")))
-;; Configuraão do org-brain 
+
+  (setq org-capture-templates  
+        '(("t" "Todo" entry (file+headline "~/MobileOrg/todoorg/todo.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("j" "Journal" entry (file+datetree "~/MobileOrg/todoorg/journal.org")
+           "* %?\nEntered on %U\n  %i\n  %a")
+          ("a" "Todo in AI" entry (file+headline "~/MobileOrg/todoorg/ai.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("A" "Todo in AI with Clipboard" entry (file "~/MobileOrg/todoorg/ai.org")
+           "* TODO %?\n%U\n   %c" :empty-lines 1)
+          ("a" "Todo in AI" entry (file "~/MobileOrg/todoorg/ai.org")
+           "* TODO %?\n%U\n   %c" :empty-lines 1)
+          ("n" "Note" entry (file "~/MobileOrg/todoorg/journal.org")
+           "* NOTE %?\n%U" :empty-lines 1)
+          ("N" "Note with Clipboard" entry (file "~/MobileOrg/todoorg/journal.org")
+           "* NOTE %?\n%U\n   %c" :empty-lines 1)
+          ("e" "Event" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Transient")
+           "* EVENT %?\n%U" :empty-lines 1)
+          ("E" "Event With Clipboard" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Transient")
+           "* EVENT %?\n%U\n   %c" :empty-lines 1) 
+          ("l" "Link" entry (file+headline  "~/MobileOrg/todoorg/journal.org" "Link")
+         "* Link  %?\n%U\n   %c" :empty-lines 1))
+        )
+  
+
+  ;; Configuraão do org-brain
   (use-package org-brain :ensure t
     :init
     (setq org-brain-path "~/MobileOrg/brain")
@@ -264,23 +309,24 @@ user code."
           org-capture-templates)
     (setq org-brain-visualize-default-choices 'all)
     (setq org-brain-title-max-length 12))
-  ;;
+
+  ;; Configuração ox-reveal 
   (require 'ox-reveal)
   (setq Org-Reveal-root "file:reveal.js")
   (setq Org-Reveal-title-slide nil)
 ;;;;; Modo de Apresentação
   (add-hook 'org-present-mode-hook
-                                                (lambda ()
-                                                  (org-present-big)
-                                                  (org-display-inline-images)
-                                                  (org-present-hide-cursor)
-                                                  (org-present-read-only)))
-                                      (add-hook 'org-present-mode-quit-hook
-                                                (lambda ()
-                                                  (org-present-small)
-                                                  (org-remove-inline-images)
-                                                  (org-present-show-cursor)
-                                                  (org-present-read-write)))
+            (lambda ()
+              (org-present-big)
+              (org-display-inline-images)
+              (org-present-hide-cursor)
+              (org-present-read-only)))
+  (add-hook 'org-present-mode-quit-hook
+            (lambda ()
+              (org-present-small)
+              (org-remove-inline-images)
+              (org-present-show-cursor)
+              (org-present-read-write)))
 
 (setq org-confirm-babel-evaluate nil)   ;don't prompt me to confirm everytime I want to evaluate a block
 ;;
@@ -339,15 +385,6 @@ user code."
      ("\\paragraph{%s}" . "\\paragraph*{%s}")
      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
-
-
-
-;;"Configuration function for user code.
-;; This function is called at the very end of Spacemacs initialization after
-;;layers configuration. You are free to put any user code."
-
-
-
 ;;; Linguagens para o orgmode
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -358,6 +395,18 @@ user code."
    (lisp . t)
    (R . t )
    ))
+
+;;; Backup
+(setq backup-by-copying t   ; don't clobber symlinks
+      version-control t     ; use versioned backups
+      delete-old-versions t
+      kept-new-versions 6
+      kept-old-versions 2)
+
+;;;; Teclas
+(global-set-key (kbd "<f9>") 'toggle-frame-fullscreen )
+(global-set-key (kbd "C-!") 'eshell )
+
 )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
