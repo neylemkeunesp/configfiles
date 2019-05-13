@@ -18,7 +18,6 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     javascript
      csv
      html
      ;; ----------------------------------------------------------------
@@ -31,11 +30,13 @@ values."
      emacs-lisp
      git 
      markdown
-     org (org :variables
-              org-enable-reveal-js-support t)
+     org
+     (org :variables
+              org-enable-reveal-js-support t
+              )
+     clojure
      latex
      games
-     ipython-notebook 
      xkcd
      (shell :variables
              shell-default-height 30
@@ -43,7 +44,6 @@ values."
              shell-default-term-shell "/bin/bash")
      gnus
      python
-     osx
      search-engine
      spotify
      ranger
@@ -52,18 +52,18 @@ values."
      ;; syntax-checking
      ;; version-control
      semantic
-     scala
-     search-engine
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      chess
+                                      ob-ipython
+                                      ox-reveal
                                       org-ref
-                                      emojify
                                       all-the-icons
+                                      chess
+                                      emojify
                                       )
 
 
@@ -115,8 +115,8 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '( "Consolas"
-                               :size  18
+   dotspacemacs-default-font '( "Ubuntu Mono"
+                               :size 24
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -215,47 +215,45 @@ values."
    )) 
 
 (defun dotspacemacs/user-init ()
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+           "* TODO %?\n  %i\n  %a")
+          ("j" "Journal" entry (file+datetree "~/org/journal.org")
+           "* %?\nEntered on %U\n  %i\n  %a")))
+;;; Evita erro na inicialização
+  (setq exec-path-from-shell-check-startup-files nil)
 
+  "Initialization function for user code.
+It is called immediately after `dotspacemacs/init'.  You are free to put any
+user code."
+(setq paradox-github-token "412ef51bf8d45f7e87e20f5616fd7208555fc2b9")
+
+) 
+
+(defun dotspacemacs/user-config ()
+
+;;;; Teclas
+  (global-set-key (kbd "<f9>") 'toggle-frame-fullscreen )
+  (global-set-key (kbd "C-!") 'eshell )
 
   ;;"Configuration function for user code.
   ;; This function is called at the very end of Spacemacs initialization after
   ;;layers configuration. You are free to put any user code."
 
-;;; Pequenos Ajustes
-  (setq neo-theme 'icons)
-  (add-hook 'after-init-hook #'global-emojify-mode)
-
-;;; Eshell
-  (setq eshell-prompt-function
-        (lambda ()
-          (concat
-           (propertize "┌─[" 'face `(:foreground "lightblue"))
-           (propertize (user-login-name) 'face `(:foreground "orange"))
-           (propertize "@" 'face `(:foreground "red"))
-           (propertize (system-name) 'face `(:foreground "orange"))
-           (propertize "]──[" 'face `(:foreground "lightblue"))
-           (propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "yellow"))
-           (propertize "]──[" 'face `(:foreground "lightblue"))
-           (propertize (concat (eshell/pwd)) 'face `(:foreground "white"))
-           (propertize "]\n" 'face `(:foreground "lightblue"))
-           (propertize "└─>" 'face `(:foreground "lightblue"))
-           (propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "lightblue"))
-           )))
-
-
   (setq org-structure-template-alist
-    '(("a" . "export ascii")
-     ("c" . "center")
-     ("C" . "comment")
-     ("e" . "example") 
-     ("E" . "export")
-     ("h" . "export html")
-     ("l" . "export latex")
-     ("q" . "quote")
-     ("s" . "src")
-     ("v" . "verse")
-     ("n" . "note")
-     ("d" . "description")))
+        '(("a" . "export ascii")
+          ("c" . "center")
+          ("C" . "comment")
+          ("e" . "example") 
+          ("E" . "export")
+          ("h" . "export html")
+          ("l" . "export latex")
+          ("q" . "quote")
+          ("s" . "src")
+          ("v" . "verse")
+          ("n" . "note")
+          ("d" . "description")))
+
 
   ;; Captura dos templates
 
@@ -283,22 +281,24 @@ values."
         )
   
 
-  ;; Configuração ox-reveal 
+
+  ;;
+  (require 'ox-reveal)
   (setq Org-Reveal-root "file:reveal.js")
   (setq Org-Reveal-title-slide nil)
 ;;;;; Modo de Apresentação
   (add-hook 'org-present-mode-hook
-            (lambda ()
-              (org-present-big)
-              (org-display-inline-images)
-              (org-present-hide-cursor)
-              (org-present-read-only)))
-  (add-hook 'org-present-mode-quit-hook
-            (lambda ()
-              (org-present-small)
-              (org-remove-inline-images)
-              (org-present-show-cursor)
-              (org-present-read-write)))
+                                                (lambda ()
+                                                  (org-present-big)
+                                                  (org-display-inline-images)
+                                                  (org-present-hide-cursor)
+                                                  (org-present-read-only)))
+                                      (add-hook 'org-present-mode-quit-hook
+                                                (lambda ()
+                                                  (org-present-small)
+                                                  (org-remove-inline-images)
+                                                  (org-present-show-cursor)
+                                                  (org-present-read-write)))
 
 (setq org-confirm-babel-evaluate nil)   ;don't prompt me to confirm everytime I want to evaluate a block
 ;;
@@ -357,6 +357,11 @@ values."
      ("\\paragraph{%s}" . "\\paragraph*{%s}")
      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 
+
+
+
+
+
 ;;; Linguagens para o orgmode
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -366,19 +371,38 @@ values."
    (lisp . t)
    (R . t )
    ))
+(setq neo-theme 'icons)
+(setq eshell-prompt-function
+(lambda ()
+(concat
+(propertize "┌─[" 'face `(:foreground "green"))
+(propertize (user-login-name) 'face `(:foreground "red"))
+(propertize "@" 'face `(:foreground "green"))
+(propertize (system-name) 'face `(:foreground "blue"))
+(propertize "]──[" 'face `(:foreground "green"))
+(propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "yellow"))
+(propertize "]──[" 'face `(:foreground "green"))
+(propertize (concat (eshell/pwd)) 'face `(:foreground "white"))
+(propertize "]\n" 'face `(:foreground "green"))
+(propertize "└─>" 'face `(:foreground "green"))
+(propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "green"))
+)))
 
-;;; Backup
-(setq backup-by-copying t   ; don't clobber symlinks
-      version-control t     ; use versioned backups
-      delete-old-versions t
-      kept-new-versions 6
-      kept-old-versions 2)
 
-;;;; Teclas
-(global-set-key (kbd "<f9>") 'toggle-frame-fullscreen )
-(global-set-key (kbd "C-!") 'eshell )
-
-  )
+(setq org-structure-template-alist
+      '(("a" . "export ascii")
+        ("c" . "center")
+        ("C" . "comment")
+        ("e" . "example") 
+        ("E" . "export")
+        ("h" . "export html")
+        ("l" . "export latex")
+        ("q" . "quote")
+        ("s" . "src")
+        ("v" . "verse")
+        ("n" . "note")
+        ("d" . "description")))
+)
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables
@@ -391,7 +415,7 @@ values."
     ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
  '(package-selected-packages
    (quote
-    (org-re-reveal all-the-icons memoize emojify ht winum mmt sudoku powerline tablist org-category-capture alert log4e gntp org-mime magit-popup hydra lv parent-mode helm-spotify-plus multi projectile pkg-info epl dash-docs haml-mode gitignore-mode fuzzy flx highlight magit transient git-commit with-editor smartparens iedit anzu evil goto-chg sbt-mode scala-mode markdown-mode polymode request diminish web-completion-data bind-map bind-key packed auctex anaconda-mode pythonic helm avy helm-core async auto-complete popup dash-functional company f yasnippet dash s ein deferred web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern tern coffee-mode atomic-chrome websocket twittering-mode org-brain pdf-tools key-chord ivy helm-bibtex biblio parsebib biblio-core org-ref tramp-hdfs auctex-latexmk yapfify xterm-color xkcd ws-butler window-numbering which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package typit toc-org tagedit stickyfunc-enhance srefactor spotify spacemacs-theme spaceline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs ranger rainbow-delimiters quelpa pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox pacmacs ox-reveal osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-plus-contrib org-download org-bullets open-junk-file noflet neotree multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl info+ indent-guide ido-vertical-mode hy-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt help-fns+ helm-themes helm-swoop helm-spotify helm-pydoc helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help ensime engine-mode emmet-mode elisp-slime-nav ecb dumb-jump dash-at-point cython-mode csv-mode company-web company-statistics company-auctex company-anaconda column-enforce-mode clean-aindent-mode bracketed-paste auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell 2048-game))))
+    (dash-docs lv parseedn parseclj a transient emojify ht chess all-the-icons memoize auctex-latexmk org-ref pdf-tools key-chord ivy helm-bibtex biblio parsebib biblio-core tablist org-bookmark-heading org-brain csv-mode slime define-word zeal-at-point yapfify xterm-color xkcd ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package typit mmt toc-org tagedit sudoku stickyfunc-enhance srefactor spotify spaceline powerline smeargle slim-mode shell-pop scss-mode sass-mode reveal-in-osx-finder restart-emacs ranger rainbow-delimiters pyvenv pytest pyenv-mode py-isort pug-mode popwin pip-requirements persp-mode pcre2el pbcopy paradox pacmacs ox-reveal ox-gfm osx-trash osx-dictionary orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-plus-contrib org-mime org-download org-bullets open-junk-file ob-ipython noflet neotree multi-term move-text mmm-mode markdown-toc markdown-mode magit-gitflow macrostep lorem-ipsum live-py-mode linum-relative link-hint less-css-mode launchctl indent-guide hy-mode dash-functional hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-spotify-plus multi helm-pydoc helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-dash helm-css-scss helm-company helm-c-yasnippet helm-ag haml-mode google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit ghub treepy let-alist graphql with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eshell-z eshell-prompt-extras esh-help ensime sbt-mode scala-mode engine-mode emmet-mode elisp-slime-nav dumb-jump diminish cython-mode company-web web-completion-data company-statistics company-auctex company-anaconda company column-enforce-mode clojure-snippets clj-refactor hydra inflections edn multiple-cursors paredit peg clean-aindent-mode cider-eval-sexp-fu eval-sexp-fu highlight cider sesman seq spinner queue pkg-info clojure-mode epl bind-map bind-key auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed auctex anaconda-mode pythonic f dash s aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
