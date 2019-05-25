@@ -115,7 +115,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '( "Ubuntu Mono"
+   dotspacemacs-default-font '( "Consolas"
                                :size 24
                                :weight normal
                                :width normal
@@ -375,19 +375,19 @@ user code."
 (setq eshell-prompt-function
 (lambda ()
 (concat
-(propertize "┌─[" 'face `(:foreground "green"))
-(propertize (user-login-name) 'face `(:foreground "red"))
-(propertize "@" 'face `(:foreground "green"))
-(propertize (system-name) 'face `(:foreground "blue"))
-(propertize "]──[" 'face `(:foreground "green"))
-(propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "yellow"))
-(propertize "]──[" 'face `(:foreground "green"))
-(propertize (concat (eshell/pwd)) 'face `(:foreground "white"))
-(propertize "]\n" 'face `(:foreground "green"))
-(propertize "└─>" 'face `(:foreground "green"))
-(propertize (if (= (user-uid) 0) " # " " $ ") 'face `(:foreground "green"))
-)))
-
+(propertize "┌─[" 'face `(:foreground "#866ec7"))
+(propertize (user-login-name) 'face `(:foreground "#c8e6f5"))
+(propertize "@" 'face `(:foreground "#866ec7"))
+(propertize (system-name) 'face `(:foreground "#7b88ff"))
+(propertize "]──[" 'face `(:foreground "#866ec7"))
+(propertize (format-time-string "%H:%M" (current-time)) 'face `(:foreground "#7b88ff"))
+(propertize "]──[" 'face `(:foreground "#866ec7"))
+(propertize (concat (eshell/pwd)) 'face `(:foreground "#7b88ff"))
+(propertize "]\n" 'face `(:foreground "#866ec7"))
+(propertize "└─>" 'face `(:foreground "#866ec7"))
+(propertize (if (= (user-uid) 0) " 👑 " " :point_right:  ") 'face `(:foreground "#866ec7"))
+)) )
+ 
 
 (setq org-structure-template-alist
       '(("a" . "export ascii")
