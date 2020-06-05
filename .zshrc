@@ -15,7 +15,7 @@ unlimit
 limit stack 8192
 limit core 0
 limit -s
-
+export TERM="xterm-256color"
 umask 022
 
 # Set up aliases
@@ -76,13 +76,14 @@ hosts=(`hostname` ftp.math.gatech.edu prep.ai.mit.edu wuarchive.wustl.edu)
 autoload -U colors && colors
 
 PROMPT="%B%{$fg[cyan]%}|%n%{$reset_color%}@%{$fg[red]%}%m%{$fg_no_bold[cyan]%}[%!]>%{$reset_color%} "
-RPROMPT="%{$fg_no_bold[yellow]%}%d%{$reset_color%}"
+RPROMPT="%{$fg_no_bold[yellow]%}%3d%{$reset_color%}"
 # Some environment variables
 export MAIL=/var/spool/mail/$USERNAME
 export LESS=-cex3M
 export HELPDIR=/usr/local/lib/zsh/help  # directory for run-help function to find docs
-PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/local/gromacs/bin
-PATH=:~/anaconda3/bin:$PATH:/usr/local/texlive/2015/bin/x86_64-darwin
+PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin::/usr/local/bin:/usr/local/gromacs/bin
+PATH=$PATH:/Applications/Mathematica.app/Contents/MacOS
+PATH=$PATH:/usr/local/texlive/2015/bin/x86_64-darwin:/Users/neylemke/anaconda/bin
 MAILCHECK=300
 HISTSIZE=200
 DIRSTACKSIZE=20
@@ -171,19 +172,26 @@ zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' \
 zstyle ':completion:*:functions' ignored-patterns '_*'
 export EDITOR=vim
 bindkey -v
-eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-wcomp zsh-ccomp-install)"
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f /Users/neylemke/google-cloud-sdk/path.zsh.inc ]; then
-  source '/Users/neylemke/google-cloud-sdk/path.zsh.inc'
+export PATH=~/anaconda/bin:$PATH:/Applications/Maxima.app/Contents/MacOS/:/Applications/Racket\ v6.2.1/bin
+export PATH=$PATH:/Users/neylemke/pesquisa/scala/scala-2.11.8/bin
+eval "$(fasd --init posix-alias zsh-hook)"
+eval "$(pyenv init -)"
+if [ -n "$INSIDE_EMACS" ]; then
+    export EDITOR=emacsclient
+    unset zle_bracketed_paste  # This line
 fi
+figlet -w 100 `hostname`; fortune | cowsay; ansiweather -l Botucatu,BR -u metric -s true -a false
 
-# The next line enables shell command completion for gcloud.
-if [ -f /Users/neylemke/google-cloud-sdk/completion.zsh.inc ]; then
-  source '/Users/neylemke/google-cloud-sdk/completion.zsh.inc'
-fi
 
-screenfetch; fortune| cowsay;curl wttr.in --silent | head -n 7 
-#figlet `hostname`; fortune| cowsay 
-plugins=(fasd)
-source /usr/local/lib/python2.7/dist-packages/powerline/bindings/zsh/powerline.zsh
+eval "$(fasd --init auto)"
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+POWERLEVEL9K_SHORTEN_DELIMITER=""
+POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
+#Better colors
+unset LSCOLORS
+export CLICOLOR=1
+export CLICOLOR_FORCE=1
+source /Users/neylemke/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon  context dir  anaconda  vi_mode)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
+source  ~/powerlevel9k/powerlevel9k.zsh-theme
