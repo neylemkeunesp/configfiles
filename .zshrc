@@ -30,10 +30,6 @@ alias h=history
 alias grep='egrep --color'
 alias ll='ls -l'
 alias la='ls -a'
-alias sgu='ssh lemke@access.grid.unesp.br'
-alias sbohr='ssh lemke2@bohr'
-alias stesla='ssh lemke@200.145.132.202'
-alias smaster='ssh lemke@200.145.132.204'
 alias lsd='ls -ld *(-/DN)'
 alias weka='java -classpath /Applications/weka-3-5-7/libsvm.jar:/Applications/weka-3-5-7/weka.jar -Xmx1024m weka.gui.GUIChooser'
 
@@ -81,13 +77,11 @@ RPROMPT="%{$fg_no_bold[yellow]%}%3d%{$reset_color%}"
 export MAIL=/var/spool/mail/$USERNAME
 export LESS=-cex3M
 export HELPDIR=/usr/local/lib/zsh/help  # directory for run-help function to find docs
-PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin::/usr/local/bin:/usr/local/gromacs/bin
-PATH=$PATH:/Applications/Mathematica.app/Contents/MacOS
-PATH=$PATH:/usr/local/texlive/2015/bin/x86_64-darwin:/Users/neylemke/anaconda/bin
+PATH=:/bin:$PATH:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin
+PATH=~/opt/anaconda3/bin:$PATH:
 MAILCHECK=300
 HISTSIZE=200
 DIRSTACKSIZE=20
-PATH=$PATH:/Applications/Mathematica.app/Contents/MacOS:/Users/neylemke/pesquisa/scala/scala-2.11.8/bin
 MAILCHECK=300
 HISTSIZE=200
 DIRSTACKSIZE=20
@@ -172,26 +166,49 @@ zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' \
 zstyle ':completion:*:functions' ignored-patterns '_*'
 export EDITOR=vim
 bindkey -v
-export PATH=~/anaconda/bin:$PATH:/Applications/Maxima.app/Contents/MacOS/:/Applications/Racket\ v6.2.1/bin
-export PATH=$PATH:/Users/neylemke/pesquisa/scala/scala-2.11.8/bin
 eval "$(fasd --init posix-alias zsh-hook)"
-eval "$(pyenv init -)"
+#eval "$(pyenv init -)"
 if [ -n "$INSIDE_EMACS" ]; then
     export EDITOR=emacsclient
     unset zle_bracketed_paste  # This line
 fi
 figlet -w 100 `hostname`; fortune | cowsay; ansiweather -l Botucatu,BR -u metric -s true -a false
 
+# The next line enables shell command completion for gcloud.
+if [ -f /Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc ]; then
+  source '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc'
+  fi
 
-eval "$(fasd --init auto)"
-POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-POWERLEVEL9K_SHORTEN_DELIMITER=""
-POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
+  eval "$(fasd --init auto)"
+  POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+  POWERLEVEL9K_SHORTEN_DELIMITER=""
+  POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
+source  ~/powerlevel9k/powerlevel9k.zsh-theme
 #Better colors
 unset LSCOLORS
 export CLICOLOR=1
 export CLICOLOR_FORCE=1
+#Syntax Highlighting 
 source /Users/neylemke/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon  context dir  anaconda  vi_mode)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
-source  ~/powerlevel9k/powerlevel9k.zsh-theme
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/neylemke/Downloads/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/neylemke/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/neylemke/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/neylemke/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/neylemke/opt/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/neylemke/opt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
