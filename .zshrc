@@ -77,8 +77,12 @@ RPROMPT="%{$fg_no_bold[yellow]%}%3d%{$reset_color%}"
 export MAIL=/var/spool/mail/$USERNAME
 export LESS=-cex3M
 export HELPDIR=/usr/local/lib/zsh/help  # directory for run-help function to find docs
+<<<<<<< HEAD
+PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin::/usr/local/bin:/usr/local/gromacs/bin
+=======
 PATH=:/bin:$PATH:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin
 PATH=~/opt/anaconda3/bin:$PATH:
+>>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
 MAILCHECK=300
 HISTSIZE=200
 DIRSTACKSIZE=20
@@ -166,8 +170,11 @@ zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' \
 zstyle ':completion:*:functions' ignored-patterns '_*'
 export EDITOR=vim
 bindkey -v
+<<<<<<< HEAD
+=======
 eval "$(fasd --init posix-alias zsh-hook)"
 #eval "$(pyenv init -)"
+>>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
 if [ -n "$INSIDE_EMACS" ]; then
     export EDITOR=emacsclient
     unset zle_bracketed_paste  # This line
@@ -179,15 +186,27 @@ if [ -f /Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc ]; then
   source '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc'
   fi
 
+<<<<<<< HEAD
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+POWERLEVEL9K_SHORTEN_DELIMITER=""
+POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
+=======
   eval "$(fasd --init auto)"
   POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
   POWERLEVEL9K_SHORTEN_DELIMITER=""
   POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
 source  ~/powerlevel9k/powerlevel9k.zsh-theme
+>>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
 #Better colors
 unset LSCOLORS
 export CLICOLOR=1
 export CLICOLOR_FORCE=1
+<<<<<<< HEAD
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon  context dir  wifi vi_mode)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
+source /home/neylemke/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/powerlevel10k/powerlevel10k.zsh-theme
+=======
 #Syntax Highlighting 
 source /Users/neylemke/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
@@ -212,3 +231,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+>>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
