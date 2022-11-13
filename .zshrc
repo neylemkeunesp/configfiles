@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 #
 # Example .zshrc file for zsh 4.0
 #
@@ -30,6 +37,7 @@ alias h=history
 alias grep='egrep --color'
 alias ll='ls -l'
 alias la='ls -a'
+alias ls='ls -G'
 alias lsd='ls -ld *(-/DN)'
 alias weka='java -classpath /Applications/weka-3-5-7/libsvm.jar:/Applications/weka-3-5-7/weka.jar -Xmx1024m weka.gui.GUIChooser'
 
@@ -77,12 +85,9 @@ RPROMPT="%{$fg_no_bold[yellow]%}%3d%{$reset_color%}"
 export MAIL=/var/spool/mail/$USERNAME
 export LESS=-cex3M
 export HELPDIR=/usr/local/lib/zsh/help  # directory for run-help function to find docs
-<<<<<<< HEAD
 PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin::/usr/local/bin:/usr/local/gromacs/bin
-=======
 PATH=:/bin:$PATH:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin
 PATH=~/opt/anaconda3/bin:$PATH:
->>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
 MAILCHECK=300
 HISTSIZE=200
 DIRSTACKSIZE=20
@@ -137,7 +142,7 @@ zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
 # allow one error for every three characters typed in approximate completer
 zstyle -e ':completion:*:approximate:*' max-errors \
     'reply=( $(( ($#PREFIX+$#SUFFIX)/3 )) numeric )'
-    
+
 # insert all expansions for expand completer
 zstyle ':completion:*:expand:*' tag-order all-expansions
 
@@ -170,51 +175,21 @@ zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' \
 zstyle ':completion:*:functions' ignored-patterns '_*'
 export EDITOR=vim
 bindkey -v
-<<<<<<< HEAD
-=======
-eval "$(fasd --init posix-alias zsh-hook)"
-#eval "$(pyenv init -)"
->>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
 if [ -n "$INSIDE_EMACS" ]; then
     export EDITOR=emacsclient
     unset zle_bracketed_paste  # This line
 fi
-figlet -w 100 `hostname`; fortune | cowsay; ansiweather -l Botucatu,BR -u metric -s true -a false
 
-# The next line enables shell command completion for gcloud.
-if [ -f /Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc ]; then
-  source '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc'
-  fi
-
-<<<<<<< HEAD
-POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-POWERLEVEL9K_SHORTEN_DELIMITER=""
-POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
-=======
-  eval "$(fasd --init auto)"
-  POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-  POWERLEVEL9K_SHORTEN_DELIMITER=""
-  POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
-source  ~/powerlevel9k/powerlevel9k.zsh-theme
->>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
-#Better colors
-unset LSCOLORS
-export CLICOLOR=1
-export CLICOLOR_FORCE=1
-<<<<<<< HEAD
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon  context dir  wifi vi_mode)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
-source /home/neylemke/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 source ~/powerlevel10k/powerlevel10k.zsh-theme
-=======
-#Syntax Highlighting 
-source /Users/neylemke/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/neylemke/Downloads/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/neylemke/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/neylemke/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+source ~/powerlevel10k/powerlevel10k.zsh-theme
+
+
+#figlet -w 100 air--intel; fortune | cowsay; ansiweather -l "Botucatu",BR -u metric -s true -a false
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -231,4 +206,3 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
->>>>>>> 1a1f1ac311f92c1d18104c3c28ea3c21161853d4
