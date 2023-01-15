@@ -5,204 +5,111 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+#ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+
+# Uncomment the following line to change how often to auto-update (in days).
+# zstyle ':omz:update' frequency 13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git zsh-interactive-cd web-search  zsh-autosuggestions  zsh-autocomplete)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
 #
-# Example .zshrc file for zsh 4.0
-#
-# .zshrc is sourced in interactive shells.  It
-# should contain commands to set up aliases, functions,
-# options, key bindings, etc.
-#
-
-
-# Search path for the cd command
-cdpath=(.. ~ ~/src ~/zsh)
-
-# Use hard limits, except for a smaller stack and no core dumps
-unlimit
-limit stack 8192
-limit core 0
-limit -s
-export TERM="xterm-256color"
-umask 022
-
-# Set up aliases
-alias mv='nocorrect mv'       # no spelling correction on mv
-alias cp='nocorrect cp'       # no spelling correction on cp
-alias mkdir='nocorrect mkdir' # no spelling correction on mkdir
-alias j=jobs
-alias pu=pushd
-alias po=popd
-alias d='dirs -v'
-alias h=history
-alias grep='egrep --color'
-alias ll='ls -l'
-alias la='ls -a'
-alias ls='ls -G'
-alias lsd='ls -ld *(-/DN)'
-alias weka='java -classpath /Applications/weka-3-5-7/libsvm.jar:/Applications/weka-3-5-7/weka.jar -Xmx1024m weka.gui.GUIChooser'
-
-# List only file beginning with "."
-alias lsa='ls -ld .*'
-
-# Shell functions
-setenv() { typeset -x "${1}${1:+=}${(@)argv[2,$#]}" }  # csh compatibility
-freload() { while (( $# )); do; unfunction $1; autoload -U $1; shift; done }
-bup () { for  file in $argv ; do ; mv $file $file.`date +%d%m%y`; done}
-latexdvipdf () {latex $argv.tex; dvipdf $argv.dvi; acroread $argv.pdf}
-
-# Where to look for autoloaded function definitions
-fpath=($fpath ~/.zfunc)
-
-# Autoload all shell functions from all directories in $fpath (following
-# symlinks) that have the executable bit on (the executable bit is not
-# necessary, but gives you an easy way to stop the autoloading of a
-# particular shell function). $fpath should not be empty for this to work.
-for func in $^fpath/*(N-.x:t); autoload $func
-
-# automatically remove duplicates from these arrays
-typeset -U path cdpath fpath manpath
-
-# Global aliases -- These do not have to be
-# at the beginning of the command line.
-alias -g M='|more'
-alias -g H='|head'
-alias -g T='|tail'
-
-manpath=($X11HOME/man /usr/man /usr/lang/man /usr/local/man /usr/share/man  )
-export MANPATH
-
-# Hosts to use for completion (see later zstyle)
-hosts=(`hostname` ftp.math.gatech.edu prep.ai.mit.edu wuarchive.wustl.edu)
-
-# Set prompts
-#PROMPT='%B|%n@%m[%!]>%B '    # default prompt
-#RPROMPT=' %B%d%B'     # prompt for right side of screen
-autoload -U colors && colors
-
-PROMPT="%B%{$fg[cyan]%}|%n%{$reset_color%}@%{$fg[red]%}%m%{$fg_no_bold[cyan]%}[%!]>%{$reset_color%} "
-RPROMPT="%{$fg_no_bold[yellow]%}%3d%{$reset_color%}"
-# Some environment variables
-export MAIL=/var/spool/mail/$USERNAME
-export LESS=-cex3M
-export HELPDIR=/usr/local/lib/zsh/help  # directory for run-help function to find docs
-PATH=:/bin:$PATH:/usr/X11R6/bin:/sopt/bin:/opt/local/bin:/opt/local/sbin::/usr/local/bin:/usr/local/gromacs/bin
-PATH=:/bin:$PATH:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin
-PATH=~/opt/anaconda3/bin:$PATH:
-MAILCHECK=300
-HISTSIZE=200
-DIRSTACKSIZE=20
-MAILCHECK=300
-HISTSIZE=200
-DIRSTACKSIZE=20
-
-# Watch for my friends
-#watch=( $(<~/.friends) )       # watch for people in .friends file
-watch=(notme)                   # watch for everybody but me
-LOGCHECK=300                    # check every 5 min for login/logout activity
-WATCHFMT='%n %a %l from %m at %t.'
-
-# Set/unset  shell options
-setopt   notify globdots correct pushdtohome cdablevars autolist
-setopt   correctall autocd recexact longlistjobs
-setopt   autoresume histignoredups pushdsilent noclobber
-setopt   autopushd pushdminus extendedglob rcquotes mailwarning
-unsetopt bgnice autoparamslash
-
-# Autoload zsh modules when they are referenced
-zmodload -a zsh/stat stat
-zmodload -a zsh/zpty zpty
-zmodload -a zsh/zprof zprof
-zmodload -ap zsh/mapfile mapfile
-
-# Some nice key bindings
-#bindkey '^X^Z' universal-argument ' ' magic-space
-#bindkey '^X^A' vi-find-prev-char-skip
-#bindkey '^Xa' _expand_alias
-#bindkey '^Z' accept-and-hold
-#bindkey -s '\M-/' \\\\
-#bindkey -s '\M-=' \|
-
-# bindkey -v               # vi key bindings
-bindkey "^?" backward-delete-char
-bindkey -e                 # emacs key bindings
-bindkey ' ' magic-space    # also do history expansion on space
-bindkey '^I' complete-word # complete on tab, leave expansion to _expand
-
-# Setup new style completion system. To see examples of the old style (compctl
-# based) programmable completion, check Misc/compctl-examples in the zsh
-# distribution.
-autoload -U compinit
-compinit
-
-# Completion Styles
-
-# list of completers to use
-zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
-
-# allow one error for every three characters typed in approximate completer
-zstyle -e ':completion:*:approximate:*' max-errors \
-    'reply=( $(( ($#PREFIX+$#SUFFIX)/3 )) numeric )'
-
-# insert all expansions for expand completer
-zstyle ':completion:*:expand:*' tag-order all-expansions
-
-# formatting and messages
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*:descriptions' format '%B%d%b'
-zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format 'No matches for: %d'
-zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
-zstyle ':completion:*' group-name ''
-
-# match uppercase from lowercase
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-# offer indexes before parameters in subscripts
-zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
-
-# command for process lists, the local web server details and host completion
-#zstyle ':completion:*:processes' command 'ps -o pid,s,nice,stime,args'
-#zstyle ':completion:*:urls' local 'www' '/var/www/htdocs' 'public_html'
-zstyle '*' hosts $hosts
-
-# Filename suffixes to ignore during completion (except after rm command)
-zstyle ':completion:*:*:(^rm):*:*files' ignored-patterns '*?.o' '*?.c~' \
-    '*?.old' '*?.pro'
-# the same for old style completion
-#fignore=(.o .c~ .old .pro)
-
-# ignore completion functions (until the _ignored completer)
-zstyle ':completion:*:functions' ignored-patterns '_*'
-export EDITOR=vim
-bindkey -v
-if [ -n "$INSIDE_EMACS" ]; then
-    export EDITOR=emacsclient
-    unset zle_bracketed_paste  # This line
-fi
-
-typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
-source ~/powerlevel10k/powerlevel10k.zsh-theme
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-source ~/powerlevel10k/powerlevel10k.zsh-theme
-
-
-#figlet -w 100 air--intel; fortune | cowsay; ansiweather -l "Botucatu",BR -u metric -s true -a false
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/neylemke/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/neylemke/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/neylemke/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/neylemke/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+source ./zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fortune | cowsay
+./ansiweather/ansiweather -l "Sao Paulo"
 
