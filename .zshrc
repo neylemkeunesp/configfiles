@@ -112,4 +112,6 @@ source $ZSH/oh-my-zsh.sh
 source ./zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fortune | cowsay
 ./ansiweather/ansiweather -l "Sao Paulo"
+alias exa="exa --icon"
+
 
